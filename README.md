@@ -6,11 +6,9 @@ Medical Large Vision-Language Models (LVLMs) have demonstrated impressive capabi
 
 To address this limitation, we introduce **MGHalluDet**, a **multi-grained chest X-ray hallucination benchmark** that systematically evaluates hallucination robustness across different report lengths and contextual complexities. Instead of focusing solely on object recognition, MGHalluDet emphasizes realistic clinical reporting scenarios and provides fine-grained annotations for multiple hallucination types.
 
----
-
 ## Dataset Description
 
-MGHalluDet contains **500 manually curated chest X-ray reports**, divided into three subsets according to report length and contextual complexity.
+MGHalluDet contains **500 chest X-ray reports**, divided into three subsets according to report length and contextual complexity.
 
 | Subset | Samples | Average Report Length |
 |---------|---------|----------------------|
@@ -20,8 +18,6 @@ MGHalluDet contains **500 manually curated chest X-ray reports**, divided into t
 | **Total** | **500** | - |
 
 The three subsets progressively increase the contextual complexity of radiology reports.
-
----
 
 ## Hallucination Categories
 
@@ -34,8 +30,6 @@ MGHalluDet categorizes hallucinations into four clinically meaningful dimensions
 | **Attribute** | Incorrect status, laterality, or severity of an existing finding. | *Mild* → *Severe*<br>*Clear* → *Opacity* |
 | **Relation** | Incorrect anatomical or spatial relationships between existing findings. | *Superior to* → *Inferior to*<br>*Anterior to* → *Posterior to* |
 | **Imaging** | Incorrect imaging projection, acquisition technique, or global image property. | *PA view* → *AP view*<br>*Normal view* → *Rotated view* |
-
----
 
 ## Annotation Format
 
@@ -95,8 +89,6 @@ Example:
 }
 ```
 
----
-
 ## Repository Structure
 
 ```text
@@ -113,8 +105,6 @@ MGHalluDet/
     └── long_text/
         └── long_text.json
 ```
-
----
 
 ## Dataset Preparation
 
@@ -149,13 +139,9 @@ MGHalluDet/
             └── ...
 ```
 
----
-
 ## License
 
 The MGHalluDet dataset is released under the **Creative Commons Attribution 4.0 International (CC BY 4.0)** License.
-
----
 
 ## Citation
 
@@ -169,5 +155,3 @@ If you find MGHalluDet useful in your research, please cite our paper.
     year = {2026}
 }
 ```
-
----
