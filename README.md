@@ -162,21 +162,13 @@ MGHalluDet/
 │
 ├── README.md
 ├── LICENSE
-├── CITATION.cff
-│
-├── data/
-│   ├── short/
-│   ├── medium/
-│   └── long/
-│
-├── scripts/
-│   ├── load_dataset.py
-│   └── evaluate.py
-│
-├── docs/
-│   └── annotation_guideline.pdf
-│
-└── examples/
+└── dataset/
+    ├── short_text/
+    │   └── short_text.json
+    ├── medium_text/
+    │   └── medium_text.json
+    └── long_text/
+        └── long_text.json
 ```
 
 ---
@@ -273,7 +265,3 @@ This repository only releases the hallucination annotations and benchmark files.
 Users are responsible for obtaining access to the original datasets and complying with their respective licenses and data use agreements.
 
 ---
-
-## Contact
-
-For questions or suggestions, please open an Issue or contact the authors.
