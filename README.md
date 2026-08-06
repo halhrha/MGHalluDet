@@ -1,20 +1,10 @@
-# MGHalluDet: A Multi-Granularity Benchmark for Hallucination Detection in Medical Large Vision-Language Models
+# MGHalluDet: Multi-Grained Benchmark for Medical LVLM Hallucination Detection Across Types and Lengths
 
 ## Overview
 
-MGHalluDet is a benchmark for evaluating hallucination detection in Medical Large Vision-Language Models (Medical LVLMs). Unlike existing benchmarks that primarily focus on short radiology captions or isolated sentence-level modifications, MGHalluDet provides multi-granularity chest X-ray reports with fine-grained hallucination annotations across varying contextual scales.
+Medical Large Vision-Language Models (LVLMs) have demonstrated impressive capabilities in chest X-ray understanding and radiology report generation. However, they remain vulnerable to **hallucinations**, producing clinically unsupported findings, incorrect anatomical descriptions, or fabricated imaging characteristics that are inconsistent with the underlying medical image.
 
-The benchmark is specifically designed to evaluate whether LVLMs can accurately identify hallucinated content in realistic radiology reports, ranging from concise findings to comprehensive clinical narratives.
-
----
-
-## Motivation
-
-Large Vision-Language Models have achieved remarkable progress in medical image understanding and radiology report generation. However, they remain prone to hallucinations, i.e., generating clinically unsupported or factually incorrect statements that are not grounded in the input chest X-ray.
-
-Most existing hallucination benchmarks concentrate on short reports or sentence-level perturbations, making them insufficient for evaluating hallucination behaviors in realistic long-form radiology reports, where multiple findings, anatomical structures, and imaging descriptions interact simultaneously.
-
-To address this limitation, we introduce **MGHalluDet**, a multi-granularity benchmark that systematically evaluates hallucination detection across different report lengths while providing token-level annotations for multiple hallucination categories.
+To address this limitation, we introduce **MGHalluDet**, a **multi-grained chest X-ray hallucination benchmark** that systematically evaluates hallucination robustness across different report lengths and contextual complexities. Instead of focusing solely on object recognition, MGHalluDet emphasizes realistic clinical reporting scenarios and provides fine-grained annotations for multiple hallucination types.
 
 ---
 
@@ -22,146 +12,99 @@ To address this limitation, we introduce **MGHalluDet**, a multi-granularity ben
 
 MGHalluDet contains **500 manually curated chest X-ray reports**, divided into three subsets according to report length and contextual complexity.
 
-| Subset | Source Dataset | Samples | Average Report Length |
-|---------|---------------|---------|----------------------|
-| Short | IU-XRay | 200 | ~50 words |
-| Medium | MIMIC-CXR | 200 | ~150 words |
-| Long | CheXpert-Plus | 100 | ~250 words |
-| **Total** | - | **500** | - |
+| Subset | Samples | Average Report Length |
+|---------|---------|----------------------|
+| Short | 200 | ~ 50 words |
+| Medium | 200 | ~ 150 words |
+| Long | 100 | ~ 250 words |
+| **Total** | **500** | - |
 
 The three subsets progressively increase the contextual complexity of radiology reports.
-
-- **Short subset** evaluates fundamental visual grounding and verification of localized clinical findings.
-- **Medium subset** introduces more complex anatomical descriptions and multiple co-existing findings.
-- **Long subset** simulates realistic comprehensive radiology reports and evaluates hallucination robustness under long-context reasoning.
-
-This hierarchical design enables systematic evaluation of LVLMs across different narrative scales.
 
 ---
 
 ## Hallucination Categories
 
-Each hallucinated report is manually annotated using four clinically meaningful hallucination categories.
+MGHalluDet categorizes hallucinations into four clinically meaningful dimensions. Compared with the conventional vision-language hallucination taxonomy (Object, Attribute, and Relation), we further introduce an **Imaging** category to capture radiology-specific hallucinations related to imaging acquisition and projection.
 
-### Object Hallucination
 
-Object hallucinations refer to fabricated or omitted pathological findings or medical devices.
-
-Examples include:
-
-- Endotracheal tube
-- Pacemaker
-- Pleural effusion
-- Pulmonary nodule
-- Central venous catheter
-
-This category evaluates whether an LVLM can correctly ground explicit medical entities in the chest X-ray.
-
----
-
-### Attribute Hallucination
-
-Attribute hallucinations modify the properties of genuine findings without changing the underlying entity.
-
-Typical examples include:
-
-- Left ↔ Right
-- Mild ↔ Severe
-- Present ↔ Absent
-- Clear ↔ Opacity
-- Enlarged ↔ Normal
-
-This category measures whether models correctly understand disease severity, laterality, and clinical status.
-
----
-
-### Relation Hallucination
-
-Relation hallucinations alter anatomical or spatial relationships between findings.
-
-Typical examples include:
-
-- superior ↔ inferior
-- anterior ↔ posterior
-- upper lobe ↔ lower lobe
-- right upper lobe ↔ left lower lobe
-
-Unlike object hallucinations, relation hallucinations preserve the involved entities while changing their spatial relationships.
-
----
-
-### Imaging Hallucination
-
-Imaging hallucinations concern global imaging properties rather than localized abnormalities.
-
-Examples include:
-
-- PA view
-- AP view
-- Lateral view
-- Rotated projection
-- Low lung volumes
-- Adequate inspiration
-
-This category evaluates whether LVLMs correctly recognize holistic imaging characteristics.
+| Category | Description | Representative Example |
+|:---------|-------------|------------------------|
+| **Object** | Fabrication or omission of explicit medical devices or pathological findings. | *Pleural effusion* → *Pulmonary nodule*<br>*No pneumothorax* → *Pneumothorax present* |
+| **Attribute** | Incorrect status, laterality, or severity of an existing finding. | *Mild* → *Severe*<br>*Clear* → *Opacity* |
+| **Relation** | Incorrect anatomical or spatial relationships between existing findings. | *Superior to* → *Inferior to*<br>*Anterior to* → *Posterior to* |
+| **Imaging** | Incorrect imaging projection, acquisition technique, or global image property. | *PA view* → *AP view*<br>*Normal view* → *Rotated view* |
 
 ---
 
 ## Annotation Format
 
-Each sample contains the original report, a hallucinated report, and fine-grained hallucination annotations.
+Each sample consists of
+
+- **id**: A unique identifier for the specific data sample.
+- **images**: A list of file names representing the associated CXR images for the case.
+- **source_text**: The original, factual medical narrative or report corresponding to the provided CXR images.
+- **hallucinated_text**: The modified medical report into which targeted hallucinations have been injected.
+- **annotations**: Fine-grained hallucination annotations.
 
 Example:
 
 ```json
 {
-  "id": 5,
-  "images": [
-    "image1.png",
-    "image2.png"
-  ],
-  "source_text": "...",
-  "hallucinated_text": "...",
-  "annotations": {
-    "object": [
-      {
-        "text": "endotracheal tube",
-        "span": [70,87]
-      }
+    "id": "1226",
+    "images": [
+        "CXR1226_IM-0150-1001.png",
+        "CXR1226_IM-0150-1002.png"
     ],
-    "attribute": [
-      {
-        "text":"enlarged",
-        "span":[54,62]
-      }
-    ],
-    "relation":[
-      ...
-    ],
-    "imaging":[
-      ...
-    ]
-  }
+    "source_text": "The heart size is within normal limits. Trachea is midline. No pleural effusions or pneumothorax. Cardiomediastinal contours are normal. There is focal consolidation in the posterior segment of the right lower lobe. No bony or soft tissue abnormalities. Right lower lobe pneumonia.",
+    "hallucinated_text": "The heart size is enlarged with pacemaker leads noted. Endotracheal tube is in place. Trachea is midline. No pleural effusions or pneumothorax. Cardiomediastinal contours are normal. There is focal consolidation in anterior segment of the left upper lobe. No bony or soft tissue abnormalities. Left upper lobe pneumonia. Film is rotated.",
+    "annotations": {
+        "object": [
+            {
+                "text": "pacemaker leads",
+                "span": [32, 47]
+            },
+            {
+                "text": "Endotracheal tube",
+                "span": [55, 72]
+            }
+        ],
+        "attribute": [
+            {
+                "text": "enlarged",
+                "span": [18, 26]
+            },
+            {
+                "text": "Left upper lobe",
+                "span": [294, 309]
+            }
+        ],
+        "relation": [
+            {
+                "text": "anterior segment of the left upper lobe",
+                "span": [215, 254]
+            }
+        ],
+        "imaging": [
+            {
+                "text": "Film is rotated",
+                "span": [321, 336]
+            }
+        ]
+    }
 }
 ```
-
-Each annotation includes:
-
-- hallucinated text
-- character span
-- hallucination category
-
-allowing token-level hallucination localization.
 
 ---
 
 ## Repository Structure
 
-```
+```text
 MGHalluDet/
 │
 ├── README.md
 ├── LICENSE
+│
 └── dataset/
     ├── short_text/
     │   └── short_text.json
@@ -173,73 +116,37 @@ MGHalluDet/
 
 ---
 
-## Data Format
+## Dataset Preparation
 
-Each JSON file contains a list of samples.
+This repository only provides the **hallucination annotation files** in JSON format. To construct the complete MGHalluDet benchmark, users should download the corresponding chest X-ray images from the original public datasets according to the `id` and `images` fields in each annotation file. Then, create an `images` directory and place downloaded images in this directory. Each subset corresponds to a different public chest X-ray dataset.
 
-Each sample consists of
+| MGHalluDet Subset | Source Dataset | Download Link |
+|-------------------|---------------|--------------|
+| **Short Text** | IU-XRay | https://www.kaggle.com/datasets/raddar/chest-xrays-indiana-university |
+| **Medium Text** | MIMIC-CXR | https://physionet.org/content/mimic-cxr/2.1.0/ |
+| **Long Text** | CheXpert-Plus | https://aimi.stanford.edu/datasets/chexpert-plus |
 
-- sample ID
-- image path(s)
-- original report
-- hallucinated report
-- hallucination annotations
+After downloading and organizing the images, the directory structure should be:
 
-The annotation spans are indexed using character offsets in the hallucinated report.
-
----
-
-## Statistics
-
-(Add dataset statistics here.)
-
-Example figures include:
-
-- Number of samples
-- Average report length
-- Number of hallucinations
-- Distribution of four hallucination types
-
-Example:
-
-| Category | Count |
-|----------|------:|
-| Object | xxx |
-| Attribute | xxx |
-| Relation | xxx |
-| Imaging | xxx |
-
----
-
-## Usage
-
-Load the dataset:
-
-```python
-import json
-
-with open("data/short/short.json") as f:
-    dataset = json.load(f)
-
-sample = dataset[0]
-
-print(sample["hallucinated_text"])
-print(sample["annotations"])
-```
-
----
-
-## Citation
-
-If you use MGHalluDet in your research, please cite our paper.
-
-```bibtex
-@inproceedings{xxx2026mghalludet,
-  title={MGHalluDet: A Multi-Granularity Benchmark for Hallucination Detection in Medical Large Vision-Language Models},
-  author={...},
-  booktitle={...},
-  year={2026}
-}
+```text
+MGHalluDet/
+│
+├── README.md
+├── LICENSE
+│
+└── dataset/
+    ├── short_text/
+    │   ├── short_text.json
+    │   └── images/
+    │       └── ...
+    ├── medium_text/
+    │   ├── medium_text.json
+    │   └── images/
+    │       └── ...
+    └── long_text/
+        ├── long_text.json
+        └── images/
+            └── ...
 ```
 
 ---
@@ -248,20 +155,19 @@ If you use MGHalluDet in your research, please cite our paper.
 
 The MGHalluDet dataset is released under the **Creative Commons Attribution 4.0 International (CC BY 4.0)** License.
 
-Users are free to use, modify, and redistribute the dataset provided that appropriate attribution is given.
-
 ---
 
-## Data Source
+## Citation
 
-MGHalluDet is constructed based on publicly available chest X-ray datasets, including:
+If you find MGHalluDet useful in your research, please cite our paper.
 
-- IU-XRay
-- MIMIC-CXR
-- CheXpert-Plus
-
-This repository only releases the hallucination annotations and benchmark files.
-
-Users are responsible for obtaining access to the original datasets and complying with their respective licenses and data use agreements.
+```bibtex
+@inproceedings{mm2026mghalludet,
+    title = {MGHalluDet: Multi-Grained Benchmark for Medical LVLM Hallucination Detection Across Types and Lengths},
+    author = {Haoran Li and Huanjia Zhu and Bingzhi Chen and Yishu Liu and Guangming Lu and Jie Wen},
+    booktitle = {34th ACM International Conference on Multimedia},
+    year = {2026}
+}
+```
 
 ---
