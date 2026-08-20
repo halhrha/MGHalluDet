@@ -142,16 +142,3 @@ MGHalluDet/
 ## License
 
 The MGHalluDet dataset is released under the **Creative Commons Attribution 4.0 International (CC BY 4.0)** License.
-
-## Citation
-
-If you find MGHalluDet useful in your research, please cite our paper.
-
-```bibtex
-@inproceedings{mm2026mghalludet,
-    title = {MGHalluDet: Multi-Grained Benchmark for Medical LVLM Hallucination Detection Across Types and Lengths},
-    author = {Haoran Li and Huanjia Zhu and Bingzhi Chen and Yishu Liu and Guangming Lu and Jie Wen},
-    booktitle = {34th ACM International Conference on Multimedia},
-    year = {2026}
-}
-```
